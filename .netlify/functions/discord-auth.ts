@@ -32,11 +32,11 @@ const handler: Handler = async (event) => {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: new URLSearchParams({
-        client_id: process.env.VITE_DISCORD_CLIENT_ID!,
-        client_secret: process.env.VITE_DISCORD_CLIENT_SECRET!,
+        client_id: process.env.VITE_DISCORD_CLIENT_ID,
+        client_secret: process.env.VITE_DISCORD_CLIENT_SECRET,
         grant_type: 'authorization_code',
         code,
-        redirect_uri: process.env.VITE_DISCORD_REDIRECT_URI!,
+        redirect_uri: process.env.VITE_DISCORD_REDIRECT_URI,
         scope: 'identify email guilds.members.read',
       }),
     });
@@ -46,35 +46,13 @@ const handler: Handler = async (event) => {
 
     if (!tokenResponse.ok) {
       console.error('Failed to get tokens:', tokens);
-      throw new Error('Failed to exchange code for tokens');
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: 'Failed to exchange code for tokens' }),
+      };
     }
 
     console.log('Successfully obtained access token');
-
-    // First, get guild roles to map IDs to names
-    console.log('Fetching guild roles...');
-    const guildResponse = await fetch(`https://discord.com/api/v10/guilds/${GUILD_ID}/roles`, {
-      headers: {
-        Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
-      },
-    });
-
-    console.log('Guild response status:', guildResponse.status);
-    let roleMap = {};
-    if (guildResponse.ok) {
-      const roles = await guildResponse.json();
-      console.log('Guild roles fetched:', roles.length, 'roles found');
-      roleMap = roles.reduce((acc: any, role: any) => {
-        acc[role.id] = {
-          name: role.name,
-          color: role.color,
-          position: role.position
-        };
-        return acc;
-      }, {});
-    } else {
-      console.error('Failed to fetch guild roles:', await guildResponse.text());
-    }
 
     // Get user's roles in the specific server
     console.log('Fetching user guild member data...');
@@ -89,18 +67,14 @@ const handler: Handler = async (event) => {
     if (memberResponse.ok) {
       const memberData = await memberResponse.json();
       console.log('Member roles fetched:', memberData.roles?.length || 0, 'roles found');
-      roles = memberData.roles.map((roleId: string) => ({
-        id: roleId,
-        ...(roleMap[roleId] || { name: roleId, color: 0, position: 0 })
-      }));
-      console.log('Processed roles:', roles);
+      roles = memberData.roles;
     } else {
       console.error('Failed to fetch member roles:', await memberResponse.text());
     }
 
     // Get Discord user info
     console.log('Fetching Discord user info...');
-    const userResponse = await fetch('https://discord.com/api/users/@me', {
+    const userResponse = await fetch('https://discord.com/api/v10/users/@me', {
       headers: {
         Authorization: `Bearer ${tokens.access_token}`,
       },
@@ -111,7 +85,10 @@ const handler: Handler = async (event) => {
 
     if (!userResponse.ok) {
       console.error('Failed to fetch Discord user info:', discordUser);
-      throw new Error('Failed to fetch Discord user info');
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: 'Failed to fetch Discord user info' }),
+      };
     }
 
     return {
@@ -129,7 +106,7 @@ const handler: Handler = async (event) => {
         avatar: discordUser.avatar ? 
           `https://cdn.discordapp.com/avatars/${discordUser.id}/${discordUser.avatar}.png` : 
           null,
-        roles: roles.sort((a, b) => b.position - a.position), // Sort roles by position
+        roles: roles,
       }),
     };
   } catch (error) {
