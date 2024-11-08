@@ -8,7 +8,8 @@ const SAMPLE_ASSETS = [
   "/assets/gallery/pythit.png",
   "/assets/gallery/ZARPYTHIA_CHAD_FRONT.png",
   "/assets/gallery/ZARPYTHIA_Profile.png",
-  "/assets/gallery/Pyth_Logomark_Light.svg"
+  "/assets/gallery/Pyth_Logomark_Light.svg",
+  "/assets/gallery/mojo.jpg"
 ];
 
 export function AssetGallery() {

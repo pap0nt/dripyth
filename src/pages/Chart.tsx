@@ -25,8 +25,8 @@ interface TopDesign {
 const TOP_DESIGNS: TopDesign[] = [
   {
     id: '1',
-    name: 'Cosmic Dreams',
-    author: 'Alice Chen',
+    name: 'Mojo`s seedphrase',
+    author: 'Mojo',
     likes: 2847,
     model: { style: 'oversized', color: 'black' },
     previews: {
@@ -36,8 +36,8 @@ const TOP_DESIGNS: TopDesign[] = [
   },
   {
     id: '2',
-    name: 'Digital Rain',
-    author: 'Marcus Wong',
+    name: 'Rookie',
+    author: 'planck',
     likes: 2456,
     model: { style: 'slim', color: 'white' },
     previews: {
@@ -47,8 +47,8 @@ const TOP_DESIGNS: TopDesign[] = [
   },
   {
     id: '3',
-    name: 'Neon Nights',
-    author: 'Sarah Johnson',
+    name: 'Degen',
+    author: 'Southgarden',
     likes: 2154,
     model: { style: 'oversized', color: 'white' },
     previews: {
@@ -58,8 +58,8 @@ const TOP_DESIGNS: TopDesign[] = [
   },
   {
     id: '4',
-    name: 'Urban Jungle',
-    author: 'David Kim',
+    name: 'Oracle',
+    author: 'Chop',
     likes: 1987,
     model: { style: 'slim', color: 'black' },
     previews: {
@@ -69,8 +69,8 @@ const TOP_DESIGNS: TopDesign[] = [
   },
   {
     id: '5',
-    name: 'Future Past',
-    author: 'Emma Davis',
+    name: 'Ruged',
+    author: 'planck',
     likes: 1876,
     model: { style: 'oversized', color: 'black' },
     previews: {
