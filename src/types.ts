@@ -35,8 +35,8 @@ export const TSHIRT_MODELS: TShirtModel[] = [
     style: 'oversized',
     color: 'white',
     previews: {
-      front: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800&fit=crop',
-      back: 'https://images.unsplash.com/photo-1523585298601-d46ae038d7d3?w=800&fit=crop'
+      front: './assets/white/oversized/front.png',
+      back: './assets/white/oversized/back.png'
     }
   },
   {
@@ -45,8 +45,8 @@ export const TSHIRT_MODELS: TShirtModel[] = [
     style: 'oversized',
     color: 'black',
     previews: {
-      front: 'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=800&fit=crop',
-      back: 'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=800&fit=crop'
+      front: './assets/black/oversized/front.png',
+      back: './assets/black/oversized/back.png'
     }
   },
   {
@@ -55,8 +55,8 @@ export const TSHIRT_MODELS: TShirtModel[] = [
     style: 'slim',
     color: 'white',
     previews: {
-      front: 'https://images.unsplash.com/photo-1581655353564-df123a1eb820?w=800&fit=crop',
-      back: 'https://images.unsplash.com/photo-1581655353564-df123a1eb820?w=800&fit=crop'
+      front: './assets/white/slim/front.png',
+      back: './assets/white/slim/back.png'
     }
   },
   {
@@ -65,8 +65,8 @@ export const TSHIRT_MODELS: TShirtModel[] = [
     style: 'slim',
     color: 'black',
     previews: {
-      front: 'https://images.unsplash.com/photo-1503341960582-b45751874cf0?w=800&fit=crop',
-      back: 'https://images.unsplash.com/photo-1503341960582-b45751874cf0?w=800&fit=crop'
+      front: './assets/black/slim/front.png',
+      back: './assets/black/slim/back.png'
     }
   }
 ];
