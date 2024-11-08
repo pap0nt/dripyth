@@ -71,7 +71,7 @@ const handler: Handler = async (event) => {
       statusCode: 200,
       headers: {
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': process.env.URL,
+        'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Headers': 'Content-Type',
         'Access-Control-Allow-Methods': 'POST, OPTIONS',
       },
@@ -93,3 +93,5 @@ const handler: Handler = async (event) => {
     };
   }
 };
+
+export { handler };
