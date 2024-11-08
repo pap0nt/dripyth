@@ -36,6 +36,9 @@ export const signInWithDiscord = async () => {
   const redirectUri = import.meta.env.VITE_DISCORD_REDIRECT_URI;
   const clientId = import.meta.env.VITE_DISCORD_CLIENT_ID;
   
+  console.log('Starting Discord auth flow');
+  console.log('Redirect URI:', redirectUri);
+  
   // Store the current URL to redirect back after auth
   sessionStorage.setItem('authRedirect', window.location.pathname);
   
@@ -48,8 +51,11 @@ export const signInWithDiscord = async () => {
 // Function to handle Discord callback
 export const handleDiscordCallback = async (code: string): Promise<void> => {
   try {
+    console.log('Processing Discord callback');
+    
     // Get base URL from environment
     const baseUrl = import.meta.env.URL || window.location.origin;
+    console.log('Using base URL:', baseUrl);
     
     // Exchange code for user info using the environment URL
     const response = await fetch(`${baseUrl}/.netlify/functions/discord-auth`, {
@@ -60,17 +66,28 @@ export const handleDiscordCallback = async (code: string): Promise<void> => {
       body: JSON.stringify({ code }),
     });
 
+    console.log('Discord auth response status:', response.status);
+
     if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Discord auth response error:', errorText);
       throw new Error('Failed to authenticate with Discord');
     }
 
     const discordUser = await response.json();
+    console.log('Discord user data received:', { 
+      id: discordUser.id,
+      username: discordUser.username,
+      roles: discordUser.roles?.length || 0
+    });
     
     try {
       // Try to sign in first
       await signInWithEmailAndPassword(auth, discordUser.email, discordUser.id);
+      console.log('Existing user signed in');
     } catch (error) {
       // If user doesn't exist, create a new account
+      console.log('Creating new user account');
       await createUserWithEmailAndPassword(auth, discordUser.email, discordUser.id);
       
       // Update the user profile with Discord info
@@ -79,14 +96,19 @@ export const handleDiscordCallback = async (code: string): Promise<void> => {
           displayName: discordUser.username,
           photoURL: discordUser.avatar,
         });
-
-        // Store Discord roles in localStorage
-        localStorage.setItem(`discord_roles_${auth.currentUser.uid}`, JSON.stringify(discordUser.roles));
+        console.log('User profile updated with Discord info');
       }
+    }
+
+    // Store Discord roles in localStorage
+    if (auth.currentUser && discordUser.roles) {
+      console.log('Storing Discord roles:', discordUser.roles);
+      localStorage.setItem(`discord_roles_${auth.currentUser.uid}`, JSON.stringify(discordUser.roles));
     }
     
     // Redirect back to the original page
     const redirect = sessionStorage.getItem('authRedirect') || '/';
+    console.log('Redirecting to:', redirect);
     window.location.href = redirect;
   } catch (error) {
     console.error('Discord auth error:', error);

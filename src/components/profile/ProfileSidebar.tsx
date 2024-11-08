@@ -2,13 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Wallet, LogOut, Palette, Package } from 'lucide-react';
 import { User } from 'firebase/auth';
 
-interface ProfileSidebarProps {
-  activeTab: 'designs' | 'orders';
-  setActiveTab: (tab: 'designs' | 'orders') => void;
-  onLogout: () => void;
-  user: User | null;
-}
-
 interface DiscordRole {
   id: string;
   name: string;
@@ -32,14 +25,26 @@ function getColorFromDiscordColor(color: number): string {
   return `bg-[#${hex}] ${textColor} border-[#${hex}]`;
 }
 
+interface ProfileSidebarProps {
+  activeTab: 'designs' | 'orders';
+  setActiveTab: (tab: 'designs' | 'orders') => void;
+  onLogout: () => void;
+  user: User | null;
+}
+
 export function ProfileSidebar({ activeTab, setActiveTab, onLogout, user }: ProfileSidebarProps) {
   const [discordRoles, setDiscordRoles] = useState<DiscordRole[]>([]);
 
   useEffect(() => {
     if (user) {
+      console.log('Checking for Discord roles for user:', user.uid);
       const storedRoles = localStorage.getItem(`discord_roles_${user.uid}`);
       if (storedRoles) {
-        setDiscordRoles(JSON.parse(storedRoles));
+        const roles = JSON.parse(storedRoles);
+        console.log('Found stored Discord roles:', roles);
+        setDiscordRoles(roles);
+      } else {
+        console.log('No Discord roles found in localStorage');
       }
     }
   }, [user]);
@@ -75,14 +80,17 @@ export function ProfileSidebar({ activeTab, setActiveTab, onLogout, user }: Prof
 
         {discordRoles.length > 0 && (
           <div className="mt-4 flex flex-wrap gap-2 justify-center">
-            {discordRoles.map((role) => (
-              <span
-                key={role.id}
-                className={`px-2 py-1 rounded-full text-xs font-medium border ${getColorFromDiscordColor(role.color)}`}
-              >
-                {role.name}
-              </span>
-            ))}
+            {discordRoles.map((role) => {
+              console.log('Rendering role:', role);
+              return (
+                <span
+                  key={role.id}
+                  className={`px-2 py-1 rounded-full text-xs font-medium border ${getColorFromDiscordColor(role.color)}`}
+                >
+                  {role.name}
+                </span>
+              );
+            })}
           </div>
         )}
       </div>

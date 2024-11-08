@@ -1,6 +1,8 @@
 import { Handler } from '@netlify/functions';
 
 const handler: Handler = async (event) => {
+  console.log('Discord auth function called with method:', event.httpMethod);
+
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
@@ -12,6 +14,8 @@ const handler: Handler = async (event) => {
     const { code } = JSON.parse(event.body || '{}');
     const GUILD_ID = '799799120478863440';
 
+    console.log('Processing auth code for Discord');
+
     if (!code) {
       return {
         statusCode: 400,
@@ -20,6 +24,7 @@ const handler: Handler = async (event) => {
     }
 
     // Exchange code for access token
+    console.log('Exchanging code for access token...');
     const tokenResponse = await fetch('https://discord.com/api/oauth2/token', {
       method: 'POST',
       headers: {
@@ -36,25 +41,64 @@ const handler: Handler = async (event) => {
     });
 
     const tokens = await tokenResponse.json();
+    console.log('Token response status:', tokenResponse.status);
 
     if (!tokenResponse.ok) {
+      console.error('Failed to get tokens:', tokens);
       throw new Error('Failed to exchange code for tokens');
     }
 
+    console.log('Successfully obtained access token');
+
+    // First, get guild roles to map IDs to names
+    console.log('Fetching guild roles...');
+    const guildResponse = await fetch(`https://discord.com/api/v10/guilds/${GUILD_ID}`, {
+      headers: {
+        Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
+      },
+    });
+
+    console.log('Guild response status:', guildResponse.status);
+    let roleMap = {};
+    if (guildResponse.ok) {
+      const guildData = await guildResponse.json();
+      console.log('Guild roles fetched:', guildData.roles?.length || 0, 'roles found');
+      roleMap = guildData.roles.reduce((acc: any, role: any) => {
+        acc[role.id] = {
+          name: role.name,
+          color: role.color,
+          position: role.position
+        };
+        return acc;
+      }, {});
+    } else {
+      console.error('Failed to fetch guild roles:', await guildResponse.text());
+    }
+
     // Get user's roles in the specific server
+    console.log('Fetching user guild member data...');
     const memberResponse = await fetch(`https://discord.com/api/v10/users/@me/guilds/${GUILD_ID}/member`, {
       headers: {
         Authorization: `Bearer ${tokens.access_token}`,
       },
     });
 
+    console.log('Member response status:', memberResponse.status);
     let roles = [];
     if (memberResponse.ok) {
       const memberData = await memberResponse.json();
-      roles = memberData.roles || [];
+      console.log('Member roles fetched:', memberData.roles?.length || 0, 'roles found');
+      roles = memberData.roles.map((roleId: string) => ({
+        id: roleId,
+        ...(roleMap[roleId] || { name: roleId, color: 0, position: 0 })
+      }));
+      console.log('Processed roles:', roles);
+    } else {
+      console.error('Failed to fetch member roles:', await memberResponse.text());
     }
 
     // Get Discord user info
+    console.log('Fetching Discord user info...');
     const userResponse = await fetch('https://discord.com/api/users/@me', {
       headers: {
         Authorization: `Bearer ${tokens.access_token}`,
@@ -62,8 +106,10 @@ const handler: Handler = async (event) => {
     });
 
     const discordUser = await userResponse.json();
+    console.log('User info fetched:', userResponse.status);
 
     if (!userResponse.ok) {
+      console.error('Failed to fetch Discord user info:', discordUser);
       throw new Error('Failed to fetch Discord user info');
     }
 
@@ -82,7 +128,7 @@ const handler: Handler = async (event) => {
         avatar: discordUser.avatar ? 
           `https://cdn.discordapp.com/avatars/${discordUser.id}/${discordUser.avatar}.png` : 
           null,
-        roles,
+        roles: roles.sort((a, b) => b.position - a.position), // Sort roles by position
       }),
     };
   } catch (error) {
@@ -93,5 +139,3 @@ const handler: Handler = async (event) => {
     };
   }
 };
-
-export { handler };
