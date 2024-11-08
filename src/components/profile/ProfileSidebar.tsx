@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Wallet, LogOut, Palette, Package } from 'lucide-react';
 import { User } from 'firebase/auth';
 
@@ -9,8 +9,32 @@ interface ProfileSidebarProps {
   user: User | null;
 }
 
+interface DiscordRole {
+  id: string;
+  name: string;
+  color: number;
+  position: number;
+}
+
+const ROLE_COLORS: { [key: string]: string } = {
+  'High Priest': 'bg-purple-500',
+  'Priest': 'bg-blue-500',
+  'Low Priest': 'bg-green-500',
+  'Chiron': 'bg-yellow-500',
+  'default': 'bg-gray-500'
+};
+
 export function ProfileSidebar({ activeTab, setActiveTab, onLogout, user }: ProfileSidebarProps) {
-  const discordRoles = ['High Priest', 'Priest', 'Low Priest', 'Chiron'];
+  const [discordRoles, setDiscordRoles] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (user) {
+      const storedRoles = localStorage.getItem(`discord_roles_${user.uid}`);
+      if (storedRoles) {
+        setDiscordRoles(JSON.parse(storedRoles));
+      }
+    }
+  }, [user]);
 
   return (
     <div className="space-y-6">
@@ -42,20 +66,22 @@ export function ProfileSidebar({ activeTab, setActiveTab, onLogout, user }: Prof
         </div>
 
         {/* Discord Roles */}
-        <div className="mt-4 flex flex-wrap gap-2 justify-center">
-          {discordRoles.map((role, index) => (
-            <span
-              key={role}
-              className={`px-2 py-1 rounded-full text-xs font-medium ${
-                index === 0 
-                  ? 'bg-primary/20 text-primary border border-primary/30' 
-                  : 'bg-gray-800 text-gray-300 border border-gray-700'
-              }`}
-            >
-              {role}
-            </span>
-          ))}
-        </div>
+        {discordRoles.length > 0 && (
+          <div className="mt-4 flex flex-wrap gap-2 justify-center">
+            {discordRoles.map((roleId, index) => (
+              <span
+                key={roleId}
+                className={`px-2 py-1 rounded-full text-xs font-medium ${
+                  index === 0 
+                    ? 'bg-primary/20 text-primary border border-primary/30' 
+                    : 'bg-gray-800 text-gray-300 border border-gray-700'
+                }`}
+              >
+                {roleId}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="space-y-1">

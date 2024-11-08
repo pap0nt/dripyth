@@ -39,8 +39,8 @@ export const signInWithDiscord = async () => {
   // Store the current URL to redirect back after auth
   sessionStorage.setItem('authRedirect', window.location.pathname);
   
-  // Redirect to Discord OAuth
-  const discordAuthUrl = `https://discord.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=identify%20email`;
+  // Redirect to Discord OAuth with additional scope
+  const discordAuthUrl = `https://discord.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=identify%20email%20guilds.members.read`;
   
   window.location.href = discordAuthUrl;
 };
@@ -49,7 +49,7 @@ export const signInWithDiscord = async () => {
 export const handleDiscordCallback = async (code: string): Promise<void> => {
   try {
     // Exchange code for user info
-    const response = await fetch('/.netlify/functions/discord-auth', {
+    const response = await fetch('./netlify/functions/discord-auth', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -76,6 +76,9 @@ export const handleDiscordCallback = async (code: string): Promise<void> => {
           displayName: discordUser.username,
           photoURL: discordUser.avatar,
         });
+
+        // Store Discord roles in localStorage
+        localStorage.setItem(`discord_roles_${auth.currentUser.uid}`, JSON.stringify(discordUser.roles));
       }
     }
     

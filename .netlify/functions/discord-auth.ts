@@ -10,6 +10,7 @@ const handler: Handler = async (event) => {
 
   try {
     const { code } = JSON.parse(event.body || '{}');
+    const GUILD_ID = '799799120478863440';
 
     if (!code) {
       return {
@@ -30,6 +31,7 @@ const handler: Handler = async (event) => {
         grant_type: 'authorization_code',
         code,
         redirect_uri: `${process.env.URL}/auth/discord/callback`,
+        scope: 'identify email guilds.members.read',
       }),
     });
 
@@ -52,8 +54,27 @@ const handler: Handler = async (event) => {
       throw new Error('Failed to fetch Discord user info');
     }
 
+    // Get user's roles in the specific server
+    const memberResponse = await fetch(`https://discord.com/api/v10/users/@me/guilds/${GUILD_ID}/member`, {
+      headers: {
+        Authorization: `Bearer ${tokens.access_token}`,
+      },
+    });
+
+    let roles = [];
+    if (memberResponse.ok) {
+      const memberData = await memberResponse.json();
+      roles = memberData.roles || [];
+    }
+
     return {
       statusCode: 200,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': process.env.URL,
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      },
       body: JSON.stringify({
         id: discordUser.id,
         username: discordUser.username,
@@ -61,6 +82,7 @@ const handler: Handler = async (event) => {
         avatar: discordUser.avatar ? 
           `https://cdn.discordapp.com/avatars/${discordUser.id}/${discordUser.avatar}.png` : 
           null,
+        roles,
       }),
     };
   } catch (error) {
