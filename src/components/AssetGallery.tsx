@@ -2,18 +2,13 @@ import React from 'react';
 import { useDesignStore } from '../store';
 
 const SAMPLE_ASSETS = [
-  'https://images.unsplash.com/photo-1599583863916-e06c29087f51?w=200&h=200&fit=crop',
-  'https://images.unsplash.com/photo-1533450718592-29d45635f0a9?w=200&h=200&fit=crop',
-  'https://images.unsplash.com/photo-1560850038-f95de6e715b3?w=200&h=200&fit=crop',
-  'https://images.unsplash.com/photo-1546768292-fb12f6c92568?w=200&h=200&fit=crop',
-  'https://images.unsplash.com/photo-1544568100-847a948585b9?w=200&h=200&fit=crop',
-  'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=200&h=200&fit=crop',
-  'https://images.unsplash.com/photo-1599583863916-e06c29087f51?w=200&h=200&fit=crop',
-  'https://images.unsplash.com/photo-1533450718592-29d45635f0a9?w=200&h=200&fit=crop',
-  'https://images.unsplash.com/photo-1560850038-f95de6e715b3?w=200&h=200&fit=crop',
-  'https://images.unsplash.com/photo-1546768292-fb12f6c92568?w=200&h=200&fit=crop',
-  'https://images.unsplash.com/photo-1544568100-847a948585b9?w=200&h=200&fit=crop',
-  'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=200&h=200&fit=crop',
+  "/assets/gallery/Custom_AYO_Pythmet_profile.png",
+  "/assets/gallery/Custom_Ayo_Pythmet.png",
+  "/assets/gallery/flock.png",
+  "/assets/gallery/pythit.png",
+  "/assets/gallery/ZARPYTHIA_CHAD_FRONT.png",
+  "/assets/gallery/ZARPYTHIA_Profile.png",
+  "/assets/gallery/Pyth_Logomark_Light.svg"
 ];
 
 export function AssetGallery() {
