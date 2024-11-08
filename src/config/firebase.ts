@@ -49,7 +49,7 @@ export const signInWithDiscord = async () => {
 export const handleDiscordCallback = async (code: string): Promise<void> => {
   try {
     // Exchange code for user info
-    const response = await fetch('./.netlify/functions/discord-auth', {
+    const response = await fetch('/.netlify/functions/discord-auth', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
