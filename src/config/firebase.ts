@@ -103,9 +103,8 @@ export const handleDiscordCallback = async (code: string): Promise<void> => {
     }
 
     // Store Discord roles and ID in localStorage
-    if (discordUser.id && discordUser.roles) {
+    if (discordUser.id) {
       console.log('Storing Discord roles for ID:', discordUser.id);
-      localStorage.setItem(`discord_roles_${discordUser.id}`, JSON.stringify(discordUser.roles));
       localStorage.setItem('current_discord_id', discordUser.id);
       
       // Store the mapping between Firebase UID and Discord ID
