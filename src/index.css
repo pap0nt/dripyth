@@ -1,0 +1,98 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-purple: #6d28d9;
+  --color-black: #000000;
+  --color-white: #ffffff;
+}
+
+body {
+  background-color: var(--color-black);
+  color: var(--color-white);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.font-michroma {
+  font-family: 'Michroma', sans-serif !important;
+}
+
+/* Cyberpunk Logo Animation */
+.logo {
+  position: relative;
+  transition: text-shadow 0.3s ease;
+}
+
+.logo:hover {
+  text-shadow: 
+    0 0 10px var(--color-white),
+    0 0 20px var(--color-white),
+    0 0 40px var(--color-white);
+  animation: textFlicker 3s infinite alternate;
+}
+
+.logo::before,
+.logo::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.logo:hover::before,
+.logo:hover::after {
+  opacity: 0.8;
+}
+
+.logo:hover::before {
+  animation: glitch 4s infinite;
+  color: #fff;
+  text-shadow: 2px 0 #ff0080;
+  z-index: -1;
+}
+
+.logo:hover::after {
+  animation: glitch 2s infinite;
+  color: #fff;
+  text-shadow: -2px 0 #00ffff;
+  z-index: -2;
+}
+
+@keyframes textFlicker {
+  0% {
+    text-shadow: 
+      0 0 10px var(--color-white),
+      0 0 20px var(--color-white),
+      0 0 40px var(--color-white);
+  }
+  100% {
+    text-shadow: 
+      0 0 5px var(--color-white),
+      0 0 10px var(--color-white),
+      0 0 20px var(--color-white);
+  }
+}
+
+@keyframes glitch {
+  0% {
+    transform: translate(0);
+  }
+  20% {
+    transform: translate(-2px, 2px);
+  }
+  40% {
+    transform: translate(-2px, -2px);
+  }
+  60% {
+    transform: translate(2px, 2px);
+  }
+  80% {
+    transform: translate(2px, -2px);
+  }
+  100% {
+    transform: translate(0);
+  }
+}
