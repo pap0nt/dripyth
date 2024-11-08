@@ -26,12 +26,12 @@ const TOP_DESIGNS: TopDesign[] = [
   {
     id: '1',
     name: 'Mojo`s seedphrase',
-    author: 'Mojo',
+    author: 'planck',
     likes: 2847,
-    model: { style: 'oversized', color: 'black' },
+    model: { style: 'oversized', color: 'white' },
     previews: {
-      front: 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=500&h=500&fit=crop',
-      back: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=500&h=500&fit=crop'
+      front: 'assets/designs/1f.jpg',
+      back: 'assets/designs/1b.jpg'
     }
   },
   {
@@ -39,10 +39,10 @@ const TOP_DESIGNS: TopDesign[] = [
     name: 'Rookie',
     author: 'planck',
     likes: 2456,
-    model: { style: 'slim', color: 'white' },
+    model: { style: 'oversized', color: 'black' },
     previews: {
-      front: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=500&h=500&fit=crop',
-      back: 'https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?w=500&h=500&fit=crop'
+      front: 'assets/designs/2f.jpg',
+      back: 'assets/designs/2b.jpg'
     }
   },
   {
@@ -50,10 +50,10 @@ const TOP_DESIGNS: TopDesign[] = [
     name: 'Degen',
     author: 'Southgarden',
     likes: 2154,
-    model: { style: 'oversized', color: 'white' },
+    model: { style: 'slim', color: 'white' },
     previews: {
-      front: 'https://images.unsplash.com/photo-1634973357973-f2ed2657db3c?w=500&h=500&fit=crop',
-      back: 'https://images.unsplash.com/photo-1618354691792-d1d42acfd860?w=500&h=500&fit=crop'
+      front: 'assets/designs/3f.jpg',
+      back: 'assets/designs/3b.jpg'
     }
   },
   {
@@ -61,21 +61,21 @@ const TOP_DESIGNS: TopDesign[] = [
     name: 'Oracle',
     author: 'Chop',
     likes: 1987,
-    model: { style: 'slim', color: 'black' },
+    model: { style: 'oversized', color: 'black' },
     previews: {
-      front: 'https://images.unsplash.com/photo-1606787619248-f301830a5a57?w=500&h=500&fit=crop',
-      back: 'https://images.unsplash.com/photo-1618354691438-25bc04584c23?w=500&h=500&fit=crop'
+      front: 'assets/designs/4f.jpg',
+      back: 'assets/designs/4b.jpg'
     }
   },
   {
     id: '5',
-    name: 'Ruged',
-    author: 'planck',
+    name: 'No Utility Gang',
+    author: 'Mojo',
     likes: 1876,
     model: { style: 'oversized', color: 'black' },
     previews: {
-      front: 'https://images.unsplash.com/photo-1583744946564-b52d01a7f418?w=500&h=500&fit=crop',
-      back: 'https://images.unsplash.com/photo-1583744946564-b52d01a7f418?w=500&h=500&fit=crop'
+      front: 'assets/designs/5f.jpg',
+      back: 'assets/designs/5b.jpg'
     }
   }
 ];
