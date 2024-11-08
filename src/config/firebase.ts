@@ -33,7 +33,7 @@ googleProvider.setCustomParameters({
 
 // Discord auth helper
 export const signInWithDiscord = async () => {
-  const redirectUri = `${window.location.origin}/auth/discord/callback`;
+  const redirectUri = import.meta.env.VITE_DISCORD_REDIRECT_URI;
   const clientId = import.meta.env.VITE_DISCORD_CLIENT_ID;
   
   // Store the current URL to redirect back after auth
@@ -48,8 +48,8 @@ export const signInWithDiscord = async () => {
 // Function to handle Discord callback
 export const handleDiscordCallback = async (code: string): Promise<void> => {
   try {
-    // Exchange code for user info
-    const response = await fetch('./.netlify/functions/discord-auth', {
+    // Exchange code for user info using the environment URL
+    const response = await fetch(`${import.meta.env.URL}/.netlify/functions/discord-auth`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

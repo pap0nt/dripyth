@@ -30,7 +30,7 @@ const handler: Handler = async (event) => {
         client_secret: process.env.VITE_DISCORD_CLIENT_SECRET!,
         grant_type: 'authorization_code',
         code,
-        redirect_uri: `${process.env.URL}/auth/discord/callback`,
+        redirect_uri: process.env.VITE_DISCORD_REDIRECT_URI!,
         scope: 'identify email guilds.members.read',
       }),
     });
@@ -39,19 +39,6 @@ const handler: Handler = async (event) => {
 
     if (!tokenResponse.ok) {
       throw new Error('Failed to exchange code for tokens');
-    }
-
-    // Get Discord user info
-    const userResponse = await fetch('https://discord.com/api/users/@me', {
-      headers: {
-        Authorization: `Bearer ${tokens.access_token}`,
-      },
-    });
-
-    const discordUser = await userResponse.json();
-
-    if (!userResponse.ok) {
-      throw new Error('Failed to fetch Discord user info');
     }
 
     // Get user's roles in the specific server
@@ -65,6 +52,19 @@ const handler: Handler = async (event) => {
     if (memberResponse.ok) {
       const memberData = await memberResponse.json();
       roles = memberData.roles || [];
+    }
+
+    // Get Discord user info
+    const userResponse = await fetch('https://discord.com/api/users/@me', {
+      headers: {
+        Authorization: `Bearer ${tokens.access_token}`,
+      },
+    });
+
+    const discordUser = await userResponse.json();
+
+    if (!userResponse.ok) {
+      throw new Error('Failed to fetch Discord user info');
     }
 
     return {
@@ -93,5 +93,3 @@ const handler: Handler = async (event) => {
     };
   }
 };
-
-export { handler };
