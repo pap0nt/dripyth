@@ -16,16 +16,24 @@ interface DiscordRole {
   position: number;
 }
 
-const ROLE_COLORS: { [key: string]: string } = {
-  'High Priest': 'bg-purple-500',
-  'Priest': 'bg-blue-500',
-  'Low Priest': 'bg-green-500',
-  'Chiron': 'bg-yellow-500',
-  'default': 'bg-gray-500'
-};
+function getColorFromDiscordColor(color: number): string {
+  if (color === 0) return 'bg-gray-800 text-gray-300 border-gray-700';
+  
+  // Convert Discord color (decimal) to hex
+  const hex = color.toString(16).padStart(6, '0');
+  const r = parseInt(hex.substring(0, 2), 16);
+  const g = parseInt(hex.substring(2, 4), 16);
+  const b = parseInt(hex.substring(4, 6), 16);
+  
+  // Calculate brightness to determine text color
+  const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+  const textColor = brightness > 128 ? 'text-black' : 'text-white';
+  
+  return `bg-[#${hex}] ${textColor} border-[#${hex}]`;
+}
 
 export function ProfileSidebar({ activeTab, setActiveTab, onLogout, user }: ProfileSidebarProps) {
-  const [discordRoles, setDiscordRoles] = useState<string[]>([]);
+  const [discordRoles, setDiscordRoles] = useState<DiscordRole[]>([]);
 
   useEffect(() => {
     if (user) {
@@ -65,19 +73,14 @@ export function ProfileSidebar({ activeTab, setActiveTab, onLogout, user }: Prof
           <span>0x1234...5678</span>
         </div>
 
-        {/* Discord Roles */}
         {discordRoles.length > 0 && (
           <div className="mt-4 flex flex-wrap gap-2 justify-center">
-            {discordRoles.map((roleId, index) => (
+            {discordRoles.map((role) => (
               <span
-                key={roleId}
-                className={`px-2 py-1 rounded-full text-xs font-medium ${
-                  index === 0 
-                    ? 'bg-primary/20 text-primary border border-primary/30' 
-                    : 'bg-gray-800 text-gray-300 border border-gray-700'
-                }`}
+                key={role.id}
+                className={`px-2 py-1 rounded-full text-xs font-medium border ${getColorFromDiscordColor(role.color)}`}
               >
-                {roleId}
+                {role.name}
               </span>
             ))}
           </div>
