@@ -38,20 +38,26 @@ export function ProfileSidebar({ activeTab, setActiveTab, onLogout, user }: Prof
   useEffect(() => {
     // Get Discord ID from localStorage
     const discordId = localStorage.getItem('current_discord_id');
+    console.log('Current Discord ID from localStorage:', discordId);
+    
     if (discordId) {
       console.log('Checking for Discord roles for Discord ID:', discordId);
       const storedRoles = localStorage.getItem(`discord_roles_${discordId}`);
       if (storedRoles) {
-        const roles = JSON.parse(storedRoles);
-        console.log('Found stored Discord roles:', roles);
-        setDiscordRoles(roles);
+        try {
+          const roles = JSON.parse(storedRoles);
+          console.log('Found stored Discord roles:', roles);
+          setDiscordRoles(roles);
+        } catch (error) {
+          console.error('Error parsing stored roles:', error);
+        }
       } else {
         console.log('No Discord roles found in localStorage');
       }
     } else {
       console.log('No Discord ID found in localStorage');
     }
-  }, []);
+  }, [user]); // Re-run when user changes
 
   return (
     <div className="space-y-6">

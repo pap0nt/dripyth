@@ -1,4 +1,5 @@
 import { Handler } from '@netlify/functions';
+import fetch from 'node-fetch';
 
 const handler: Handler = async (event) => {
   console.log('Discord auth function called with method:', event.httpMethod);
@@ -11,8 +12,8 @@ const handler: Handler = async (event) => {
   }
 
   try {
-    const { code } = JSON.parse(event.body || '{}');
     const GUILD_ID = '799799120478863440';
+    const { code } = JSON.parse(event.body || '{}');
 
     console.log('Processing auth code for Discord');
 
@@ -23,8 +24,8 @@ const handler: Handler = async (event) => {
       };
     }
 
-    // Exchange code for access token
     console.log('Exchanging code for access token...');
+    // Exchange code for access token
     const tokenResponse = await fetch('https://discord.com/api/oauth2/token', {
       method: 'POST',
       headers: {
@@ -40,8 +41,8 @@ const handler: Handler = async (event) => {
       }),
     });
 
-    const tokens = await tokenResponse.json();
     console.log('Token response status:', tokenResponse.status);
+    const tokens = await tokenResponse.json();
 
     if (!tokenResponse.ok) {
       console.error('Failed to get tokens:', tokens);
@@ -52,7 +53,7 @@ const handler: Handler = async (event) => {
 
     // First, get guild roles to map IDs to names
     console.log('Fetching guild roles...');
-    const guildResponse = await fetch(`https://discord.com/api/v10/guilds/${GUILD_ID}`, {
+    const guildResponse = await fetch(`https://discord.com/api/v10/guilds/${GUILD_ID}/roles`, {
       headers: {
         Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
       },
@@ -61,9 +62,9 @@ const handler: Handler = async (event) => {
     console.log('Guild response status:', guildResponse.status);
     let roleMap = {};
     if (guildResponse.ok) {
-      const guildData = await guildResponse.json();
-      console.log('Guild roles fetched:', guildData.roles?.length || 0, 'roles found');
-      roleMap = guildData.roles.reduce((acc: any, role: any) => {
+      const roles = await guildResponse.json();
+      console.log('Guild roles fetched:', roles.length, 'roles found');
+      roleMap = roles.reduce((acc: any, role: any) => {
         acc[role.id] = {
           name: role.name,
           color: role.color,
@@ -77,7 +78,7 @@ const handler: Handler = async (event) => {
 
     // Get user's roles in the specific server
     console.log('Fetching user guild member data...');
-    const memberResponse = await fetch(`https://discord.com/api/v10/users/@me/guilds/${GUILD_ID}/member`, {
+    const memberResponse = await fetch(`https://discord.com/api/v10/guilds/${GUILD_ID}/members/@me`, {
       headers: {
         Authorization: `Bearer ${tokens.access_token}`,
       },
@@ -105,8 +106,8 @@ const handler: Handler = async (event) => {
       },
     });
 
-    const discordUser = await userResponse.json();
     console.log('User info fetched:', userResponse.status);
+    const discordUser = await userResponse.json();
 
     if (!userResponse.ok) {
       console.error('Failed to fetch Discord user info:', discordUser);
@@ -139,3 +140,5 @@ const handler: Handler = async (event) => {
     };
   }
 };
+
+export { handler };
