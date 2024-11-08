@@ -36,9 +36,16 @@ export function ProfileSidebar({ activeTab, setActiveTab, onLogout, user }: Prof
   const [discordRoles, setDiscordRoles] = useState<DiscordRole[]>([]);
 
   useEffect(() => {
-    // Get Discord ID from localStorage
-    const discordId = localStorage.getItem('current_discord_id');
-    console.log('Current Discord ID from localStorage:', discordId);
+    if (!user) {
+      console.log('No user logged in');
+      return;
+    }
+
+    console.log('Checking roles for Firebase UID:', user.uid);
+    
+    // Get Discord ID from Firebase UID mapping
+    const discordId = localStorage.getItem(`firebase_discord_map_${user.uid}`);
+    console.log('Found Discord ID from Firebase mapping:', discordId);
     
     if (discordId) {
       console.log('Checking for Discord roles for Discord ID:', discordId);
@@ -55,7 +62,7 @@ export function ProfileSidebar({ activeTab, setActiveTab, onLogout, user }: Prof
         console.log('No Discord roles found in localStorage');
       }
     } else {
-      console.log('No Discord ID found in localStorage');
+      console.log('No Discord ID mapping found for Firebase UID');
     }
   }, [user]); // Re-run when user changes
 

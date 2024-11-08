@@ -75,6 +75,7 @@ export const handleDiscordCallback = async (code: string): Promise<void> => {
     }
 
     const discordUser = await response.json();
+    
     console.log('Discord user data received:', { 
       id: discordUser.id,
       username: discordUser.username,
@@ -83,6 +84,7 @@ export const handleDiscordCallback = async (code: string): Promise<void> => {
     
     try {
       // Try to sign in first
+      console.log('Attempting to sign in existing user');
       await signInWithEmailAndPassword(auth, discordUser.email, discordUser.id);
       console.log('Existing user signed in');
     } catch (error) {
@@ -100,12 +102,16 @@ export const handleDiscordCallback = async (code: string): Promise<void> => {
       }
     }
 
-    // Store Discord roles in localStorage using Discord ID
+    // Store Discord roles and ID in localStorage
     if (discordUser.id && discordUser.roles) {
       console.log('Storing Discord roles for ID:', discordUser.id);
       localStorage.setItem(`discord_roles_${discordUser.id}`, JSON.stringify(discordUser.roles));
-      // Also store the Discord ID in localStorage for reference
       localStorage.setItem('current_discord_id', discordUser.id);
+      
+      // Store the mapping between Firebase UID and Discord ID
+      if (auth.currentUser) {
+        localStorage.setItem(`firebase_discord_map_${auth.currentUser.uid}`, discordUser.id);
+      }
     }
     
     // Redirect back to the original page
