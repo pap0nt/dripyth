@@ -100,10 +100,12 @@ export const handleDiscordCallback = async (code: string): Promise<void> => {
       }
     }
 
-    // Store Discord roles in localStorage
-    if (auth.currentUser && discordUser.roles) {
-      console.log('Storing Discord roles:', discordUser.roles);
-      localStorage.setItem(`discord_roles_${auth.currentUser.uid}`, JSON.stringify(discordUser.roles));
+    // Store Discord roles in localStorage using Discord ID
+    if (discordUser.id && discordUser.roles) {
+      console.log('Storing Discord roles for ID:', discordUser.id);
+      localStorage.setItem(`discord_roles_${discordUser.id}`, JSON.stringify(discordUser.roles));
+      // Also store the Discord ID in localStorage for reference
+      localStorage.setItem('current_discord_id', discordUser.id);
     }
     
     // Redirect back to the original page

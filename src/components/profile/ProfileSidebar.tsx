@@ -36,9 +36,11 @@ export function ProfileSidebar({ activeTab, setActiveTab, onLogout, user }: Prof
   const [discordRoles, setDiscordRoles] = useState<DiscordRole[]>([]);
 
   useEffect(() => {
-    if (user) {
-      console.log('Checking for Discord roles for user:', user.uid);
-      const storedRoles = localStorage.getItem(`discord_roles_${user.uid}`);
+    // Get Discord ID from localStorage
+    const discordId = localStorage.getItem('current_discord_id');
+    if (discordId) {
+      console.log('Checking for Discord roles for Discord ID:', discordId);
+      const storedRoles = localStorage.getItem(`discord_roles_${discordId}`);
       if (storedRoles) {
         const roles = JSON.parse(storedRoles);
         console.log('Found stored Discord roles:', roles);
@@ -46,8 +48,10 @@ export function ProfileSidebar({ activeTab, setActiveTab, onLogout, user }: Prof
       } else {
         console.log('No Discord roles found in localStorage');
       }
+    } else {
+      console.log('No Discord ID found in localStorage');
     }
-  }, [user]);
+  }, []);
 
   return (
     <div className="space-y-6">
